@@ -8,29 +8,34 @@ def main(textFilePath, stopwordsFilePath, maxCount):
     Run multiple functions to count words from a text file.
     Inputs two paths for text files (".txt", "stopwords.txt"), and a max count.
     """
-    # Check if textFilePath is a valid file and ends with .txt
-    print(type(textFilePath),textFilePath)
+    
+    # Check if textFilePath is a valid URL
     if textFilePath.lower().startswith(("https:", "http:")):
+        # Try to open the URL, and see if an actual webpage
         try:
             response = urllib.request.urlopen(sys.argv[1])
             print("URL Open")
-        except:
-            print("ERROR: Arg 1 is not a valid path to a URL.")
+        except:                             # If the URL is not valid
+            print("ERROR: Arg 1 is not a valid URL.")
             return
+        # Decode the URL webpage into lines of text, and list of words
         lines = response.read().decode("utf8").splitlines()
         words = wordfreq.tokenize(lines)
 
     else:
+        # Check if textFilePath is a valid file and ends with .txt
         if not os.path.isfile(textFilePath):
             print("ERROR: Arg 1 is not a valid path to a file.")
             return
         if not textFilePath.lower().endswith(".txt"):
             print("ERROR: Arg 1 is not a valid text file.")
             return
+        # Open and read the input document
         inp_file = open(textFilePath, encoding="utf-8")
         print("file Open")
+        # Tokenize the words in the file to a list of words
         words = wordfreq.tokenize(inp_file)
-        inp_file.close()
+        inp_file.close()                    # Close file
         
     # Check if stopwordsFilePath is a valid file and ends with stopwords.txt
     if not os.path.isfile(stopwordsFilePath):
@@ -43,15 +48,14 @@ def main(textFilePath, stopwordsFilePath, maxCount):
     # Open the stopwords.txt file
     stopwords_File = open(stopwordsFilePath, encoding="utf-8")
 
-    # Tokenize the text file and stopwords file into lists of words
+    # Tokenize the stopwords file into list of words
     stopwords = wordfreq.tokenize(stopwords_File)
 
     # Count the number of words in the text file, excluding words from stopwords.txt
     word_count = wordfreq.countWords(words, stopwords)
     wordfreq.printTopMost(word_count, maxCount)
     
-    # Close files
-    stopwords_File.close()
+    stopwords_File.close()                  # Close file
 
 
 if __name__ == "__main__":                  # If this is the main file run
